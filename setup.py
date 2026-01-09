@@ -1,10 +1,14 @@
 from setuptools import setup
-from pip._internal.req import parse_requirements
 import os
 
 
-requirements = parse_requirements('requirements.txt', session=False)
-required_packages = [str(package.__dict__.get('req', package.__dict__['requirement'])) for package in requirements]
+def read_requirements():
+    """Read requirements from requirements.txt file."""
+    with open('requirements.txt', 'r') as f:
+        return [line.strip() for line in f if line.strip() and not line.startswith('#')]
+
+
+required_packages = read_requirements()
 
 setup(
     name="slurm_gres_viz",
@@ -20,8 +24,8 @@ setup(
     package_dir={'slurm_gres_viz': 'slurm_gres_viz'},
     entry_points={
         'console_scripts' : [
-            f'slurm-gres-viz=slurm_gres_viz.main:{"forced_main" if bool(os.environ.get("FORCE_ONLY_MINE", False)) else "main"}'
-        ]  # todo: main function을 여러 개 만들고 main class가 옵션을 args가 아니라 init에서 받아와야 함
+            'slurm-gres-viz=slurm_gres_viz.main:main'
+        ]
     },
     classifiers=[
         'Environment :: Console',

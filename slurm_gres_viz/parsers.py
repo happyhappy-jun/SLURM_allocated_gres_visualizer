@@ -23,7 +23,7 @@ def parse_nodestring(node_string:str):
     num_cpus_alloc, = re.findall(r'CPUAlloc=(\d+)', node_string)
     num_cpus_total, = re.findall(r'CPUTot=(\d+)', node_string)
     num_gpus_alloc, = re.findall(r'AllocTRES=.*gres/gpu=(\d)', node_string) or [0]
-    num_gpus_total, = re.findall(r'Gres=[a-zA-Z]+:(\d)', node_string)
+    num_gpus_total, = re.findall(r'Gres=gpu:[^:]+:(\d+)', node_string) or [0]
     mem_alloc, = re.findall(r'AllocMem=(\d+)', node_string)
     mem_total, = re.findall(r'RealMemory=(\d+)', node_string)
     return nodename, state, int(num_cpus_alloc), int(num_cpus_total), int(num_gpus_alloc), int(num_gpus_total), MiB2GiB(float(mem_alloc)), MiB2GiB(float(mem_total))

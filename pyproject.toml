@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slurm_gres_viz"
+version = "2.1.1"
+description = "The app for visualizing allocated GPUs by SLURM"
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "MIT"}
+authors = [
+    {name = "Hyogun Lee(Haawron)", email = "gunsbrother@khu.ac.kr"}
+]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: End Users",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "numpy==1.24.3",
+    "matplotlib==3.6.3",
+    "sty==1.0.4",
+    "prometheus-client",
+    "requests",
+    "pandas>=2.0.0,<3.0.0",
+    "bs4",
+]
+
+[project.scripts]
+slurm-gres-viz = "slurm_gres_viz.main:main"
+
+[project.urls]
+Homepage = "https://github.com/Haawron/SLURM_allocated_gres_visualizer"
+Repository = "https://github.com/Haawron/SLURM_allocated_gres_visualizer"
+
+[tool.setuptools]
+packages = ["slurm_gres_viz"]
+
+[tool.setuptools.package-dir]
+slurm_gres_viz = "slurm_gres_viz"
+

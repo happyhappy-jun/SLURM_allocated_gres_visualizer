@@ -3,5 +3,5 @@ matplotlib==3.6.3
 sty==1.0.4
 prometheus-client
 requests
-pandas==2.0.0rc0
+pandas>=2.0.0,<3.0.0
 bs4

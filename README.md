@@ -26,11 +26,68 @@ both of which are very tedious. This project can solve this.
 - For all computing nodes, `node-exporter` are available at port `9100` and `dcgm-exporter` at `9400`.
 
 # Installation
+
+## System-wide Installation (Recommended)
+
+For system-wide installation that makes `slurm-gres-viz` available to all users:
+
 ```bash
 git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
-/usr/bin/python3 setup.py install  # be sure to be without conda
+
+# Option 1: Using pip (recommended, modern approach)
+sudo pip3 install .
+
+# Option 2: Using pip with editable mode (for development)
+sudo pip3 install -e .
+
+# Option 3: Build and install wheel (most reliable)
+pip3 install build
+python3 -m build
+sudo pip3 install dist/slurm_gres_viz-*.whl
 ```
+
+## User-level Installation (No sudo required)
+
+If you don't have sudo access or want to install only for your user:
+
+```bash
+git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+cd SLURM_allocated_gres_visualizer
+
+# Install to user directory (~/.local/bin)
+pip3 install --user .
+
+# Make sure ~/.local/bin is in your PATH
+export PATH="$HOME/.local/bin:$PATH"
+# Add to ~/.bashrc or ~/.profile for persistence:
+# echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+```
+
+## Virtual Environment Installation (Isolated)
+
+For isolated installation in a virtual environment:
+
+```bash
+git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+cd SLURM_allocated_gres_visualizer
+
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install package
+pip install .
+
+# The command will be available while venv is activated
+```
+
+## Important Notes
+
+- **Avoid conda environment**: Make sure you're using system Python or a virtual environment, not conda, when installing system-wide
+- **Python version**: Requires Python 3.6 or higher
+- **Dependencies**: All dependencies will be installed automatically
+- **Entry point**: The `slurm-gres-viz` command will be available in your PATH after installation
 
 # Usage
 ```bash

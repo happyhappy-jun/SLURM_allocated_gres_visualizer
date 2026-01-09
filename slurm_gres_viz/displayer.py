@@ -223,6 +223,8 @@ class Legend:  # Lower body
         del df['job_arr_id']
         df['gpus'] = df['gpus'].replace('', pd.NA).fillna('-')
         df['mem'] = df['mem'].astype(str) + f'{self.space_placeholder}GiB'
+        # Replace spaces in job_name with placeholder to prevent splitting
+        df['job_name'] = df['job_name'].astype(str).str.replace(' ', self.space_placeholder)
         # inserting the color legend
         df.insert(0, 'colors', color_legend)
         # masking multi-node jobs
@@ -254,7 +256,7 @@ class Legend:  # Lower body
 
     def calculate_widths(self, df, display_colnames):
         tmp_df_for_calculating_width = pd.concat([df.astype(str), pd.DataFrame([display_colnames], columns=df.columns)], ignore_index=True)
-        widths = tmp_df_for_calculating_width.applymap(lambda elem: len(str(elem))).max()
+        widths = tmp_df_for_calculating_width.map(lambda elem: len(str(elem))).max()
         widths['colors'] = 8
         return widths
 
