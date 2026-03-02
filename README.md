@@ -32,7 +32,7 @@ both of which are very tedious. This project can solve this.
 For system-wide installation that makes `slurm-gres-viz` available to all users:
 
 ```bash
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Option 1: Using pip (recommended, modern approach)
@@ -52,7 +52,7 @@ sudo pip3 install dist/slurm_gres_viz-*.whl
 If you don't have sudo access or want to install only for your user:
 
 ```bash
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Install to user directory (~/.local/bin)
@@ -69,7 +69,7 @@ export PATH="$HOME/.local/bin:$PATH"
 For isolated installation in a virtual environment:
 
 ```bash
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Create and activate virtual environment

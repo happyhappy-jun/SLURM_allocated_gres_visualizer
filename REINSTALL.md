@@ -5,8 +5,8 @@ The entry point script wasn't created during the initial installation. Follow th
 ## Step 1: Uninstall the current installation
 
 ```bash
-cd /fsx/byungjun/SLURM_allocated_gres_visualizer
-sudo python3 -m pip uninstall -y slurm_gres_viz
+cd /path/to/SLURM_allocated_gres_visualizer
+sudo python3 -m pip uninstall -y slurm-gres-viz
 ```
 
 ## Step 2: Reinstall with fixed setup.py

@@ -17,7 +17,7 @@ This method installs the package system-wide, making it available to all users.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Install system-wide (requires sudo)
@@ -42,7 +42,7 @@ This method installs the package in your home directory.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Install to user directory
@@ -74,7 +74,7 @@ This method creates an isolated Python environment.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Create virtual environment
@@ -108,7 +108,7 @@ This method builds a wheel package first, then installs it.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Haawron/SLURM_allocated_gres_visualizer.git
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 
 # Install build tool
