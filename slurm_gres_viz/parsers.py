@@ -11,10 +11,11 @@ def parse_jobstring(job_string:str):
     jobid, = re.findall(r'^JobId=(\d+)', job_string)  # Why ^? => not to capture ArrayJobId
     arrayjobid, = re.findall(r'ArrayJobId=(\d+)', job_string) or (None,)
     arraytaskid, = re.findall(r'ArrayTaskId=(\d+)', job_string) or (None,)
+    partition, = re.findall(r'Partition=(\S+)', job_string) or (None,)
     jobname, = re.findall(r'JobName=(.*)', job_string)
     job_tres_strings = re.findall(r'\s(Nodes=.*)', job_string)  # \s: white-space-like char
     job_tres_dict = dict(sum([list(job_tres_string_to_dict(job_tres_string).items()) for job_tres_string in job_tres_strings], []))  # sum up tres dicts
-    return userid, jobid, arrayjobid, arraytaskid, jobname, job_tres_dict
+    return userid, jobid, arrayjobid, arraytaskid, partition, jobname, job_tres_dict
 
 
 def parse_nodestring(node_string:str):
@@ -22,8 +23,9 @@ def parse_nodestring(node_string:str):
     state, = re.findall(r'State=([\w\+]+)', node_string)
     num_cpus_alloc, = re.findall(r'CPUAlloc=(\d+)', node_string)
     num_cpus_total, = re.findall(r'CPUTot=(\d+)', node_string)
-    num_gpus_alloc, = re.findall(r'AllocTRES=.*gres/gpu=(\d)', node_string) or [0]
-    num_gpus_total, = re.findall(r'Gres=gpu:[^:]+:(\d+)', node_string) or [0]
+    num_gpus_alloc, = re.findall(r'AllocTRES=.*gres/gpu=(\d+)', node_string) or [0]
+    # Prefer CfgTRES because it is consistent across Slurm Gres string variations.
+    num_gpus_total, = re.findall(r'CfgTRES=.*gres/gpu=(\d+)', node_string) or [0]
     mem_alloc, = re.findall(r'AllocMem=(\d+)', node_string)
     mem_total, = re.findall(r'RealMemory=(\d+)', node_string)
     return nodename, state, int(num_cpus_alloc), int(num_cpus_total), int(num_gpus_alloc), int(num_gpus_total), MiB2GiB(float(mem_alloc)), MiB2GiB(float(mem_total))

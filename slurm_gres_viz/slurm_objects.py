@@ -15,7 +15,7 @@ INVALID_NODE_STATES = ['DRAIN', 'DOWN', 'INVALID']
 class Job:
     def __init__(self, job_string=None):
         self.job_string = job_string or ''
-        self.userid, self.id, self.arrayjobid, self.arraytaskid, self.name, self.tres_dict = parse_jobstring(self.job_string)
+        self.userid, self.id, self.arrayjobid, self.arraytaskid, self.partition, self.name, self.tres_dict = parse_jobstring(self.job_string)
 
 
 class GPU:
