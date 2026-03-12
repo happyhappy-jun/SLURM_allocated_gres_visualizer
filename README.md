@@ -1,6 +1,21 @@
 # SLURM_allocated_gres_visualizer
 **The app for visualizing allocated GPUs by SLURM**
 
+## Quick Install (Bash, copy-paste)
+
+```bash
+python3 -m pip install --user git+https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git && \
+export PATH="$HOME/.local/bin:$PATH" && \
+slurm-gres-viz --help
+```
+
+If `slurm-gres-viz` is not found in a new shell session:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
 ![image](https://user-images.githubusercontent.com/25451196/222977415-c8b992e6-d46d-4856-9a26-558505e64956.png)
 
 When you are using Slurm and you want to check which gpus are allocated, you must have done something like

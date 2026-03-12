@@ -288,7 +288,9 @@ class Legend:  # Lower body
     def _format_gpu_range(self, start, end):
         if start == end:
             return f'{start}'
-        return f'{start}...{end}'
+        if end == start + 1:
+            return f'{start},{end}'
+        return f'{start}..{end}'
 
     def calculate_widths(self, df, display_colnames):
         tmp_df_for_calculating_width = pd.concat([df.astype(str), pd.DataFrame([display_colnames], columns=df.columns)], ignore_index=True)
