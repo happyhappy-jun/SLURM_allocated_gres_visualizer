@@ -4,8 +4,10 @@
 ## Quick Install (Bash, copy-paste)
 
 ```bash
-python3 -m pip install --user git+https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git && \
-export PATH="$HOME/.local/bin:$PATH" && \
+git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
+cd SLURM_allocated_gres_visualizer
+python3 -m pip install --user .
+export PATH="$HOME/.local/bin:$PATH"
 slurm-gres-viz --help
 ```
 
