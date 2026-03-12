@@ -7,7 +7,7 @@
 git clone https://github.com/happyhappy-jun/SLURM_allocated_gres_visualizer.git
 cd SLURM_allocated_gres_visualizer
 python3 -m pip install --user .
-export PATH="$HOME/.local/bin:$PATH"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 slurm-gres-viz --help
 ```
 
