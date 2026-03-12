@@ -202,8 +202,12 @@ class Legend:  # Lower body
         self.show_only_mine = show_only_mine
 
         self.default_colnames = ['colors', 'user_id', 'job_id', 'job_arr_id', 'job_arr_task_id', 'partition', 'job_name', 'node_name', 'gpus', 'cpus', 'mem']
-        self.default_display_colnames = [colname.replace('job_arr_task_id', 'arr_idx').upper() for colname in self.default_colnames if colname != 'job_arr_id']
-        self.default_aligns = pd.Series(['<', '<', '>', '<', '<', '<', '<', '^', '^', '>', '>'], self.default_colnames)
+        self.default_display_colnames = [
+            colname.upper()
+            for colname in self.default_colnames
+            if colname not in ['job_arr_id', 'job_arr_task_id']
+        ]
+        self.default_aligns = pd.Series(['<', '<', '<', '<', '<', '<', '<', '^', '^', '>', '>'], self.default_colnames)
 
         self.df, self.display_colnames, self.aligns = self.build_df()
         self.widths = self.calculate_widths(self.df, self.display_colnames)
@@ -235,7 +239,9 @@ class Legend:  # Lower body
             df = df[df['user_id'].str.contains(os.environ['USER'])]
         color_legend = df['job_id'].map(lambda jid: colorize('********', get_color_from_idx(int(jid))))  # before the column job_id overwritten
         df['job_id'] = df['job_arr_id'].fillna(df['job_id'])  # firstly with job_arr_id, and overwrite with job_id only for none rows
+        df['job_id'] = self.compose_job_id_with_array_idx(df['job_id'], df['job_arr_task_id'])
         del df['job_arr_id']
+        del df['job_arr_task_id']
         df['gpus'] = df['gpus'].replace('', pd.NA).fillna('-')
         df['gpus'] = df['gpus'].astype(str).str.replace(' ', self.space_placeholder)
         df['mem'] = df['mem'].astype(str) + f'{self.space_placeholder}GiB'
@@ -244,20 +250,23 @@ class Legend:  # Lower body
         # inserting the color legend
         df.insert(0, 'colors', color_legend)
         # masking multi-node jobs
-        duplicates = df.duplicated(subset=['job_id', 'job_arr_task_id'], keep='first')
-        df.loc[duplicates, ['colors', 'user_id', 'job_id', 'job_arr_task_id', 'partition', 'job_name']] = self.space_placeholder
+        duplicates = df.duplicated(subset=['job_id', 'job_name'], keep='first')
+        df.loc[duplicates, ['colors', 'user_id', 'job_id', 'partition', 'job_name']] = self.space_placeholder
 
-        no_arr_job = df['job_arr_task_id'].replace(self.space_placeholder, pd.NA).isna().all()
         display_colnames = self.default_display_colnames.copy()
         aligns = self.default_aligns.copy()
-        if no_arr_job:
-            del df['job_arr_task_id']
-            del aligns['job_arr_task_id']
-            display_colnames.remove('ARR_IDX')
-        else:
-            df['job_arr_task_id'] = df['job_arr_task_id'].fillna(self.space_placeholder)
+        del aligns['job_arr_task_id']
 
         return df, display_colnames, aligns
+
+    def compose_job_id_with_array_idx(self, job_ids, arr_task_ids):
+        result = []
+        for job_id, arr_idx in zip(job_ids, arr_task_ids):
+            if pd.isna(arr_idx):
+                result.append(str(job_id))
+            else:
+                result.append(f'{job_id}({arr_idx})')
+        return result
 
     def build_records_from_jobs(self, jobs):
         records = []
@@ -303,6 +312,11 @@ class Legend:  # Lower body
             return
 
         terminal_width = shutil.get_terminal_size(fallback=(120, 24)).columns
+        whole_width = self.widths.sum() + (self.widths.shape[0]-1)*len(self.delimiter_column)
+        if whole_width > terminal_width and 'partition' in self.df.columns:
+            self.df['partition'] = self.df['partition'].map(self.truncate_partition_name)
+            self.widths = self.calculate_widths(self.df, self.display_colnames)
+
         delimiter_total = (self.widths.shape[0] - 1) * len(self.delimiter_column)
         fixed_width_without_jobname = int(self.widths.sum() - self.widths['job_name'])
         available_jobname_width = terminal_width - delimiter_total - fixed_width_without_jobname
@@ -323,6 +337,13 @@ class Legend:  # Lower body
         if max_width <= len(ellipsis):
             return value[:max_width]
         return value[:max_width-len(ellipsis)] + ellipsis
+
+    def truncate_partition_name(self, value):
+        value = str(value)
+        max_width = 12
+        if len(value) <= max_width:
+            return value
+        return value[:9] + '...'
 
 
 def get_color_from_idx(idx:int):
