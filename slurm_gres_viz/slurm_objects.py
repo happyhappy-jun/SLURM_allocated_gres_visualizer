@@ -1,4 +1,5 @@
 from typing import Dict, List, Tuple, Union
+import re
 import requests
 from bs4 import BeautifulSoup
 from prometheus_client.parser import text_string_to_metric_families
@@ -58,6 +59,8 @@ class Node:
         self.num_cpus_alloc = num_cpus_alloc  # node_string
         self.num_gpus_alloc = num_gpus_alloc  # node_string
         self.num_gpus_total = num_gpus_total  # node_string
+        partitions, = re.findall(r'Partitions=(\S+)', self.node_string) or ('',)
+        self.partitions = partitions.split(',') if partitions else []
 
         # ==========================================================
         # getting infos from exporters (slow)

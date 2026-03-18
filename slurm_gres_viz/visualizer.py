@@ -16,7 +16,7 @@ class SlurmTresVisualizer:
         test_mode:bool=False,
 
         show_index:bool=False, show_gpu_memory:bool=False, show_gpu_util:bool=False,
-        show_only_mine:bool=False
+        show_only_mine:bool=False, partition:str=None
     ):
         self.node_strings = node_strings
         self.job_strings = job_strings
@@ -27,14 +27,20 @@ class SlurmTresVisualizer:
         self.show_gpu_memory = show_gpu_memory
         self.show_gpu_util = show_gpu_util
         self.show_only_mine = show_only_mine
+        self.partition_filters = self.parse_partition_filters(partition)
 
         self.nodes, self.jobs = self.get_infos()
 
     # =================================================================================================
 
     def get_infos(self):
-        nodes = self.get_node_infos()
         jobs = self.get_job_infos()
+        nodes = self.get_node_infos()
+        if self.partition_filters:
+            nodes = [node for node in nodes if any(partition in self.partition_filters for partition in node.partitions)]
+            related_node_names = {nodename for job in jobs for nodename in job.tres_dict.keys()}
+            if related_node_names:
+                nodes = [node for node in nodes if node.name in related_node_names]
         return nodes, jobs
 
     def get_node_infos(self):
@@ -62,8 +68,15 @@ class SlurmTresVisualizer:
                 jobstate, = re.findall(r'JobState=([A-Z]+)', job_string)
                 if jobstate == 'RUNNING':
                     job_info = Job(job_string)
+                    if self.partition_filters and job_info.partition not in self.partition_filters:
+                        continue
                     job_infos.append(job_info)
         return job_infos
+
+    def parse_partition_filters(self, partition):
+        if not partition:
+            return set()
+        return {elem.strip() for elem in partition.split(',') if elem.strip()}
 
     # =================================================================================================
 

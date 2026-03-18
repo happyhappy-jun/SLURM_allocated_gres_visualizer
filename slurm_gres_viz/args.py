@@ -23,6 +23,8 @@ parser.add_argument('-gm', '--gpu-memory', action='store_true',
                     help='asd')
 parser.add_argument('-gu', '--gpu-util', action='store_true',
                     help='asd')
+parser.add_argument('-p', '--partition', type=str, default=None,
+                    help='Show only specified partition (or comma-separated partitions)')
 
 # iterate
 parser.add_argument('-l', '--loop', type=rate_in_range, default=-1,

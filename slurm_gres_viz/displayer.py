@@ -47,7 +47,7 @@ class DashBoard:  # Upper body
         self.show_only_mine = show_only_mine
 
         self.node_names = set(node.name for node in self.nodes)
-        self.max_num_node_gpus = max(map(lambda node: node.num_gpus_total, self.nodes))
+        self.max_num_node_gpus = max(map(lambda node: node.num_gpus_total, self.nodes), default=0)
         self.delimiter_within_gpu = '|'
         if sum([self.show_index, self.show_gpu_memory, self.show_gpu_util]) <= 1:
             self.delimiter_between_gpu = ''
@@ -151,8 +151,8 @@ class DashBoard:  # Upper body
 
     def calculate_widths(self):
         widths = {
-            'nodename': max(map(lambda node: len(node.name), self.nodes)),
-            'cpu': max(map(lambda node: np.log10(node.num_cpus_total).astype(int)+1, self.nodes)),
+            'nodename': max(map(lambda node: len(node.name), self.nodes), default=0),
+            'cpu': max(map(lambda node: np.log10(node.num_cpus_total).astype(int)+1, self.nodes), default=1),
             'mem': 6
             # why don't we have gpu items' width?
             # => as colorizer's width varies aligning with width does not work
@@ -312,7 +312,7 @@ class Legend:  # Lower body
             return
 
         terminal_width = shutil.get_terminal_size(fallback=(120, 24)).columns
-        whole_width = self.widths.sum() + (self.widths.shape[0]-1)*len(self.delimiter_column)
+        whole_width = self.get_table_width()
         if whole_width > terminal_width and 'partition' in self.df.columns:
             self.df['partition'] = self.df['partition'].map(self.truncate_partition_name)
             self.widths = self.calculate_widths(self.df, self.display_colnames)
@@ -328,6 +328,21 @@ class Legend:  # Lower body
                 lambda v: self.truncate_text(v, new_jobname_width)
             )
             self.widths['job_name'] = new_jobname_width
+
+        # Final fallback for very narrow terminals.
+        # If truncation is still not enough, drop CPU/MEM columns.
+        if self.get_table_width() > terminal_width:
+            dropped_cols = [col for col in ['cpus', 'mem'] if col in self.df.columns]
+            if dropped_cols:
+                self.df = self.df.drop(columns=dropped_cols)
+                for col in dropped_cols:
+                    if col in self.aligns:
+                        del self.aligns[col]
+                self.display_colnames = [col.upper() for col in self.df.columns]
+                self.widths = self.calculate_widths(self.df, self.display_colnames)
+
+    def get_table_width(self):
+        return self.widths.sum() + (self.widths.shape[0]-1)*len(self.delimiter_column)
 
     def truncate_text(self, value, max_width):
         value = str(value)
